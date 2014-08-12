@@ -7,12 +7,23 @@
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class TicTacToeDemo extends JPanel implements MouseListener {
+    static int cnt = 0;
     boolean t = false;
-    public TicTacToeDemo() {
+    int num, id;
+    playerX x;
+    playerO o;
+    
+    public TicTacToeDemo(int num, playerX x, playerO o) {
         addMouseListener(this);
+        this.num = num;
+        this.x = x;
+        this.o = o;
+        cnt = cnt + 1;
+        id = cnt;
     }
 
     @Override
@@ -23,28 +34,51 @@ public class TicTacToeDemo extends JPanel implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.println("Here");
-        if(TicTacToeLogic.circle==false) {
-            TicTacToeLogic.setCircle(true);
-            TicTacToeLogic.setCross(false);
+        //System.out.println("Here\t"+num);
+        //System.out.println(id);
+        if(o.turn == false) {
+            o.setTurn(true);
+            x.setTurn(false);
+            
+            o.addCount(num, id);
+            //System.out.println(o.getCount() + "\t" + o.checkWinner());
+            
+        } else if(x.turn == false ) {
+            x.setTurn(true);
+            o.setTurn(false);
+            
+            x.addCount(num, id);
+            //System.out.println(x.getCount() + "\t" + x.checkWinner());
         }
-        else if(TicTacToeLogic.cross==false) {
-            TicTacToeLogic.setCross(true);
-            TicTacToeLogic.setCircle(false);
-        }
-        //TicTacToeLogic.setCross(true);
+                
         repaint();
+        
+        if( o.checkWinner() ) {
+            JOptionPane.showMessageDialog(this.getParent(), "O Has Won The Game!");
+            //super.dispatchEvent(new WindowEvent(super.getRootPane().get, WindowEvent.WINDOW_CLOSING));
+            //super.getRootPane().getParent().setVisible(false);
+            //super.dispatchEvent(new WindowEvent((Window)this.getRootPane().getParent(), WindowEvent.WINDOW_CLOSING));
+            System.exit(0);
+        }
+        else if( x.checkWinner() ) {
+            JOptionPane.showMessageDialog(this.getParent(), "X Has Won The Game!");
+            //super.dispatchEvent(new WindowEvent(super.getRootPane().get, WindowEvent.WINDOW_CLOSING));
+            //super.getRootPane().getParent().setVisible(false);
+            //super.dispatchEvent(new WindowEvent((Window)this.getRootPane().getParent(), WindowEvent.WINDOW_CLOSING));
+            System.exit(0);
+        }
+        
     }
     
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(10));
-        if(TicTacToeLogic.circle) {
+        if( o.turn ) {
             super.paintComponent(g);
             g2d.drawOval(10, 10, getWidth()-20, getHeight()-20);
         }
-        else if(TicTacToeLogic.cross) {
+        else if( x.turn ) {
             super.paintComponent(g);
             g2d.drawLine(10, 10, getWidth()-10, getHeight()-10);
             g2d.drawLine(getWidth()-10, 10, 10, getHeight()-10);
